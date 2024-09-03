@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  title: Vehicle registration API
+  description: A service to manage vehicle registrations.
+  version: 1.0.1
+  contact:
+    name: Tamás Sinku
+paths:
+  /jarmuvek:
+    post:
+      description: Registers a new vehicle
+      operationId: RegisterVehicle
+      tags: [ "Vehicle" ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterVehicleRequestDto'
+      responses:
+        201:
+          description: "The vehicle has been successfully registered"
+          headers:
+            Location:
+              description: The path to the registered vehicle
+              schema:
+                type: string
+                example: /jarmuvek/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        400:
+          description: >
+            Invalid request, such as:
+              - Invalid JSON string in request body
+              - Missing required property
+              - Invalid value of a property
+        409:
+          description: A vehicle with the provided "rendszam" already exists
+        500:
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    get:
+      description: Gets the number of registered vehicles
+      operationId: GetCountOfRegisteredVehicles
+      tags: [ "Vehicle" ]
+      responses:
+        200:
+          description: Successful query
+          content:
+            text/plain:
+              schema:
+                type: integer
+                description: The number of registered vehicles
+                example: 351
+        500:
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /jarmuvek/{uuid}:
+    get:
+      description: Gets an already registered vehicle
+      operationId: GetVehicleById
+      tags: [ "Vehicle" ]
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The vehicle's unique ID provided in the POST /jarmuvek response when it was registered
+      responses:
+        200:
+          description: The vehicle is found and its data is returned in the response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredVehicleDto'
+        400:
+          description: Missing or malformed "uuid"
+        404:
+          description: No vehicle is registered with the provided ID
+        500:
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /kereses:
+    get:
+      description: Searches for vehicles matching the provided keyword
+      operationId: SearchVehicle
+      tags: [ "Vehicle" ]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            example: robot
+          description: The keyword to look for in the license plate, owner or additional information. Case insensitive.
+      responses:
+        200:
+          description: The vehicle is found and its data is returned in the response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchVehicleResultDto'
+        400:
+          description: Missing or empty search query
+        500:
+          $ref: '#/components/responses/InternalServerErrorResponse'
+components:
+  responses:
+    InternalServerErrorResponse:
+      description: The server was unable to process the request due to internal error.
+  schemas:
+    RegisterVehicleRequestDto:
+      properties:
+        rendszam:
+          type: string
+          minLength: 1
+          maxLength: 20
+          example: "ROBOTD-02"
+          description: Vehicle license plate number
+        tulajdonos:
+          type: string
+          example: "Robot Dreams Kft."
+          minLength: 1
+          maxLength: 200
+          description: Vehicle owner
+        forgalmi_ervenyes:
+          type: string
+          format: date
+          description: Validity of traffic permit
+        adatok:
+          type: array
+          minItems: 0
+          maxItems: 200
+          description: Additional information
+          example:
+            - "fehér"
+            - "VIN: WP0ZZZ99ZTS392124"
+          items:
+            type: string
+            minLength: 1
+            maxLength: 200
+      required:
+        - rendszam
+        - tulajdonos
+        - forgalmi_ervenyes
+        - adatok
+    RegisteredVehicleDto:
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          description: The vehicle's unique ID in this system
+        rendszam:
+          type: string
+          minLength: 1
+          maxLength: 20
+          example: "ROBOTD-02"
+          description: Vehicle license plate number
+        tulajdonos:
+          type: string
+          example: "Robot Dreams Kft."
+          minLength: 1
+          maxLength: 200
+          description: Vehicle owner
+        forgalmi_ervenyes:
+          type: string
+          format: date
+          description: Validity of traffic permit
+        adatok:
+          type: array
+          minItems: 0
+          maxItems: 200
+          description: Additional information
+          example:
+            - "fehér"
+            - "VIN: WP0ZZZ99ZTS392124"
+          items:
+            type: string
+            minLength: 1
+            maxLength: 200
+      required:
+        - uuid
+        - rendszam
+        - tulajdonos
+        - forgalmi_ervenyes
+        - adatok
+    SearchVehicleResultDto:
+      type: array
+      description: "An array of matching vehicles found during the search operation. May be empty if no matches were found."
+      items:
+        $ref: '#/components/schemas/RegisteredVehicleDto'

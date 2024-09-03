@@ -5,18 +5,20 @@
 Miközben (vagy előtte, vagy utána) implementálod a házi feladatot, ez a keret segít a beadásban:
 
 1. Másold/klónozd ezt a repót!
-2. Töltsd ki a [docker-compose.yaml](./docker-compose.yaml) konfigurációt!
-3. Készítsd el a Docker képfájlokat!
+2. Használhatod az [Open API definíciót](./openapi.yaml) implementálásnál.
+    * Ha használod, köszönd meg Sinku Tamásnak!
+3. Töltsd ki a [docker-compose.yaml](./docker-compose.yaml) konfigurációt!
+4. Készítsd el a Docker képfájlokat!
     * Használd a `docker build --platform linux/amd64` parancsot, hogy Linuxon is fusson!
-4. Mentsd el a szükséges Docker képfájlokat!
+5. Mentsd el a szükséges Docker képfájlokat!
     * Használd a `docker image save KÉPFÁJL_NEVE -o FÁJL`!
-5. Töltsd ki a [load-images.sh](./load-images.sh) fájlban a szükséges képfájlokat!
-6. Írj néhány sort a beadványodról (lentebb)!
-7. Tömörítsd be az egész könyvtárat úgy, hogy a `docker-compose.yaml` legyen az állomány gyökerében!
+6. Töltsd ki a [load-images.sh](./load-images.sh) fájlban a szükséges képfájlokat!
+7. Írj néhány sort a beadványodról (lentebb)!
+8. Tömörítsd be az egész könyvtárat úgy, hogy a `docker-compose.yaml` legyen az állomány gyökerében!
     * Használd a [compres.sh](./compress.sh) (Linux) vagy [compress.bat](./compress.bat) (Windows) parancsokat!
     * Az archívum neve a te neved legyen `csaladi_kereszt.tar.gz` formában!
     * Ha kitöltöd a neved, a fenti két parancs így csinálja.
-8. Add be!
+9. Add be!
 
 ## Mindent jól csináltál?
 
